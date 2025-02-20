@@ -1,57 +1,80 @@
-# [Title] Design Document
+# Django UML CLI - Design Document
 
-Author: [Your Name]
+Author: Gabryel Nóbrega
 
 ## Introduction
 
 ### Rationale
 
-What are you trying to accomplish? What’s wrong with things the way they are now?
+The Django UML CLI aims to automate the generation and synchronization of Django models from UML diagrams exported from Draw.io. This tool streamlines model creation, reduces manual errors, and ensures consistency between UML design and Django applications.
 
 ### Background
 
-Describe any historical context that would be needed to understand the document, including legacy considerations.
+In many Django projects, the database schema is initially designed using UML diagrams. However, translating these designs into Django models is a manual and error-prone process. This tool automates that process, integrating UML-based design directly into Django projects.
 
 ### Terminology
 
-If the document uses any special words or terms, list them here.
+- **UML**: Unified Modeling Language, used for visualizing database schemas.
+- **Draw.io**: A diagramming tool used to create UML diagrams.
+- **Django Models**: Python classes representing database tables in Django.
+- **CLI**: Command-line interface used to execute commands in a terminal.
 
 ### Non-Goals
 
-If there are related problems that you have decided not to address with this design, but which someone might conceivably expect you to solve, then list them here.
+- This tool does not validate UML diagrams for correctness beyond syntax validation.
+- It does not handle Django migrations automatically; the user must apply migrations manually.
 
 ## Proposed Design
 
-Start with a brief, high-level description of the solution. The following sections will go into more detail.
-
 ### System Architecture
 
-If the design consists of a collaboration between multiple large-scale components, list those components here — or better, include a diagram.
+The CLI tool consists of the following components:
+- **UML Parser**: Parses XML UML diagrams and extracts table structures.
+- **Model Generator**: Converts extracted table structures into Django model definitions.
+- **Diff Analyzer**: Compares existing models with UML-generated models and logs differences.
+- **File Manager**: Handles file system operations for UML and model files.
 
 ### Data Model
 
-Describe how the data is stored. This could include a description of the database schema.
+Data is stored in UML XML files, which the parser reads to extract table and field definitions. Django models are generated from this structured data.
 
 ### Interface/API Definitions
 
-Describe how the various components talk to each other. For example, if there are REST endpoints, describe the endpoint URL and the format of the data and parameters used.
+The CLI provides the following commands:
+- `createappfolders`: Creates UML storage folders based on Django’s `INSTALLED_APPS`.
+- `create-models <app_name>`: Parses UML and generates Django models.
+- `compare-models <app_name>`: Compares UML-generated models with existing models and logs differences.
 
 ### Business Logic
 
-If the design requires any non-trivial algorithms or logic, describe them.
+- **Parsing UML**: Extracts table names, field names, types, and constraints.
+- **Generating Models**: Converts extracted information into Django model classes.
+- **Comparing Models**: Identifies changes between UML and existing models.
 
 ### Migration Strategy
 
-If the design incurs non-backwards-compatible changes to an existing system, describe the process whereby entities that depend on the system are going to migrate to the new design.
+- Users must manually apply Django migrations after model generation using:
+  ```bash
+  python manage.py makemigrations
+  python manage.py migrate
+  ```
 
 ## Impact
 
-Describe the potential impacts of the design on overall performance, security, and other aspects of the system.
+- **Efficiency**: Reduces the time required to create and update Django models.
+- **Consistency**: Ensures that database structures align with the UML design.
+- **Maintainability**: Simplifies tracking changes between UML and models.
 
 ## Risks
 
-If there are any risks or unknowns, list them here. Also if there is additional research to be done, mention that as well.
+- UML diagrams may be incorrectly formatted, leading to parsing errors.
+- If models are modified manually after generation, comparisons may not be accurate.
+- The tool does not support complex Django model features like custom managers or proxy models.
 
 ## Alternatives
 
-If there are other potential solutions which were considered and rejected, list them here, as well as the reason why they were not chosen.
+- **Manual Model Creation**: This approach is time-consuming and error-prone.
+- **Third-Party Tools**: Some third-party tools exist but may not integrate seamlessly with Django’s ORM.
+- **Direct Database Reverse Engineering**: Tools like `inspectdb` can generate models from a database, but this does not enforce UML-based design consistency.
+
+This design ensures a streamlined workflow for UML-based Django model generation and synchronization, optimizing efficiency and consistency in database schema management.

@@ -1,0 +1,13 @@
+include README.md
+include LICENSE
+include INSTALL.md
+include CHANGELOG.md
+include CONTRIBUTING.md
+include DESIGN_TEMPLATE.md
+include SECURITY.md
+recursive-include docs *
+recursive-include src/uml_diagrams *
+recursive-include django_uml_models *
+recursive-include tests *
+prune tests/__pycache__
+prune tests/test_project/__pycache__
