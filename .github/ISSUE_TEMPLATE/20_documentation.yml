@@ -1,0 +1,18 @@
+name: Project documentation
+description: An issue about the Project documentation
+labels:
+  - 'Documentation'
+  - 'type: Task'
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+        > Report only an issue related to the Project documentation
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What is the issue about the documentation?
+    validations:
+      required: true
